@@ -70,13 +70,52 @@ Decompose X-ray Images for Bone and Soft Tissue([논문](https://arxiv.org/abs/2
 <img width="1564" height="709" alt="image" src="https://github.com/user-attachments/assets/5af49590-77aa-4d6e-838c-857e26dc575d" />
 
 ## 3. 부위별 전문 모델 학습 결과
-ㅇㅇ
+다양한 모델 구조와 인코더, 손실 함수, 증강을 사용해 각 부위별 전문 모델을 학습시켰고 그 중 가장 높은 성능을 보인 조합을 기재하면 아래와 같았습니다.
+
+|모델 담당 부위|모델 구조|인코더|성능|
+|:------------:|:-------:|:-----:|:---:|
+|팔뼈|U-Net|EfficientNet-B3|99.02%|
+|손목뼈|U-Net++|HRNet-w48|95.90%|
+|손가락뼈|U-Net++|HRNet-w48|97.93%|
+
+요약하니 내용이 없어 보이지만.. 1시간~2시간 가량 소요되는 실험을 100번 이상 수행해 얻은 결과입니다. ㅠㅠ (팔: 28회 실험, 손목: 51회 실험, 손가락: 25회 실험)
 
 ## 4. 손가락뼈 모델 성능 개선
-ㅇㅇ
+
+### (1) Dice box plot
+
+손가락뼈 모델의 검증 데이터셋 추론 결과를 토대로 클래스별 Dice box plot을 그려봤습니다. 노란 점선은 각 뼈가 속한 손가락(엄지, 검지, 중지, 약지, 새끼)을 기준으로 그었습니다. 1~3번 클래스는 엄지손가락 뼈, 4~7번클래스는 검지 뼈, 8~11번 클래스는 중지 뼈라고 이해하시면 됩니다.
+
+<img width="1161" height="638" alt="image" src="https://github.com/user-attachments/assets/63ad1d98-e9eb-447b-bb0a-d3c07ff4c741" />  
+
+플롯에서 패턴이 보입니다. 각 손가락에서 상대적으로 작은 뼈(예: 1, 4, 5, 8번 클래스)의 dice는 상대적으로 큰 뼈(예: 2, 3, 6, 7 클래스)의 dice보다 낮은 경향을 보였습니다. 손가락에 끝에 위치할수록 뼈의 경계가 Soft Tissue Effect에 의해 흐려지기 때문에 모델이 제대로 세그멘테이션하는 데 어려움을 겪은 것으로 보입니다. 이를 해결하기 위해서 Soft Tissue Effect를 제거한 BTD 이미지로 모델을 학습시켰으나 유의미한 성능 개선을 이루진 못했습니다.
+
+### (2) FP/FN ratio box plot
+
+다음으로 모델 성능 저하에 FP 에러와 FN 에러 중 어느 것이 더 기여를 했는지 파악하기 위해 FP 에러와 FN 에러의 비율을 시각화했습니다.
+
+<img width="1646" height="584" alt="image" src="https://github.com/user-attachments/assets/409e2fea-f8a0-4470-9d7a-a2eac1939c67" />  
+
+그래프를 해석하는 방법은 다음과 같습니다.  
+50th percentile를 나타내는 주황색 선이  
+(1) 0(녹색 선)에 가까울수록, 해당 클래스의 Dice 성능 저하에 FP 에러와 FN 에러가 기여하는 정도가 비슷했음을 의미합니다.  
+(2) 0보다 위에 위치할수록, 해당 클래스의 Dice 성능 저하에 FP 에러가 더 큰 영향을 주었음을 의미합니다.  
+(3) 0보다 아래에 위치할수록, 해당 클래스의 Dice 성능 저하에 FN 에러가 더 큰 영향을 주었음을 의미합니다.   
+
+손가락뼈 모델의 경우 FN 에러에 의한 성능 하락이 지배적인 모습을 볼 수 있었습니다. 이를 개선하기 위해서 Tversky loss를 사용하고 최적의 Threshold 값을 탐색했습니다.
+
+<img width="1613" height="807" alt="image" src="https://github.com/user-attachments/assets/8842e104-ba9b-4eb6-8063-5bdd3564e0d0" />
+
+Dice loss(=Tversky(α=0.5, β=0.5)) 대신 Tversky(α=0.45, β=0.55)를 사용했을 때, 다시 말해 FN 에러에 더 패널티를 부과하는 손실 함수를 사용했을 때, 모델 성능이 97.93에서 97.99%로 개선되는 것을 확인할 수 있었습니다. 또한 Treshold를 0.4로 설정함으로써 모델 성능을 98.00%로 개선할 수 있었습니다.
+
+Tversky(α=0.45, β=0.55)와 Treshold=0.4를 적용했을 때 모델 출력 내 FP 에러와 FN 에러의 비중이 어떻게 변했는지 확인해보면 아래와 같습니다. 전과 달리 주황색 선이 녹색 선에 근접한 것을 확인할 수 있습니다.
+
+<img width="1319" height="735" alt="image" src="https://github.com/user-attachments/assets/90d9aaf9-ec7b-46f0-be2a-04011ffd318e" />
 
 ## 5. 팔뼈 모델 성능 개선
-ㅇㅇ
+
+팔뼈 데이터에 대한 모델의 추론 결과를 관찰했습니다. 아래와 같이 Soft Tissue Effect로 인해 모델이 뼈의 윤곽을 제대로 잡지 못하는 경우를 관찰할 수 있었습니다.
+
 
 ## 6. 손목뼈 모델 성능 개선
 ㅇㅇ
