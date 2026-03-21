@@ -108,17 +108,39 @@ Decompose X-ray Images for Bone and Soft Tissue([논문](https://arxiv.org/abs/2
 
 Dice loss(=Tversky(α=0.5, β=0.5)) 대신 Tversky(α=0.45, β=0.55)를 사용했을 때, 다시 말해 FN 에러에 더 패널티를 부과하는 손실 함수를 사용했을 때, 모델 성능이 97.93에서 97.99%로 개선되는 것을 확인할 수 있었습니다. 또한 Treshold를 0.4로 설정함으로써 모델 성능을 98.00%로 개선할 수 있었습니다.
 
-Tversky(α=0.45, β=0.55)와 Treshold=0.4를 적용했을 때 모델 출력 내 FP 에러와 FN 에러의 비중이 어떻게 변했는지 확인해보면 아래와 같습니다. 전과 달리 주황색 선이 녹색 선에 근접한 것을 확인할 수 있습니다.
+### (3) FP/FN 에러 비율 개선 확인
+
+Tversky(α=0.45, β=0.55)와 Treshold=0.4를 적용했을 때 모델 출력 내 FP 에러와 FN 에러의 비중이 어떻게 변했는지 확인하면 아래와 같습니다. 전과 달리 주황색 선이 녹색 선에 근접해 있습니다. FP 에러와 FN 에러의 비율이 어느 정도 맞춰진 걸 확인할 수 있었습니다.
 
 <img width="1319" height="735" alt="image" src="https://github.com/user-attachments/assets/90d9aaf9-ec7b-46f0-be2a-04011ffd318e" />
 
 ## 5. 팔뼈 모델 성능 개선
 
+### (1) 데이터 관찰 및 BTD 이미지 사용
+
 팔뼈 데이터에 대한 모델의 추론 결과를 관찰했습니다. 아래와 같이 Soft Tissue Effect로 인해 모델이 뼈의 윤곽을 제대로 잡지 못하는 경우를 관찰할 수 있었습니다.
 
+<img width="1092" height="695" alt="image" src="https://github.com/user-attachments/assets/ca1182af-9074-4cdc-bc78-b0116eaf4e22" />
+
+이를 해결하기 위해 Soft Tissue Effect가 제거된 BTD 이미지를 사용하기로 했습니다. 그 결과 아래와 같이 문제의 데이터에서 FN 에러가 줄어든 것을 확인하고, 팔뼈 모델의 성능을 99.03%에서 99.24%로 개선할 수 있었습니다.
+
+<img width="1884" height="70" alt="image" src="https://github.com/user-attachments/assets/98eb22ff-5203-4d8a-9689-c99532589c88" />
+
+### (2) FP/FN ratio box plot
+
+또한 FP/FN ratio box plot을 그린 결과, 팔뼈 모델에선 FN 에러보다 FP 에러가 더 많이 발생하고 있음을 확인할 수 있었습니다. Threshold 조정을 통해 FP/FN 에러의 비율을 1:1로 맞추고자 했으나 아래 표를 보면 알 수 있듯이 효과를 보진 못했습니다. 그래서 팔뼈 모델에서는 Threshold=0.5를 유지하기로 했습니다.
+
+<img width="1889" height="445" alt="image" src="https://github.com/user-attachments/assets/f2b8eb0c-8a47-4915-8640-c4cd8f1df96c" />
+
+### (3) 추론 결과 분포 변화 확인
+
+마지막으로 BTD 이미지 사용 전후로 모델의 추론 결과 분포가 어떻게 바뀌었는지 보겠습니다. 대부분의 데이터의 Dice가 0.98 이상으로 측정된 것을 볼 수 있었으며 각 클래스마다 dice가 저조한 데이터가 상당량 줄어든 것이 확인되었습니다.
+
+<img width="1298" height="868" alt="image" src="https://github.com/user-attachments/assets/740574fe-4b64-4fa3-bb5a-1991c945c7fe" />
 
 ## 6. 손목뼈 모델 성능 개선
-ㅇㅇ
+
+Tversky loss 적용, Threshold 조정, CLAHE 사용, BTD 이미지 사용 등 여러 방법을 시도했으나 성능 개선을 이루진 못했습니다. 그래서 손목뼈 모델의 성능은 이전의 95.90%에서 변하지 않았습니다.
 
 ## 7. 최종 결과
 ㅇㅇ
