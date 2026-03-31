@@ -136,8 +136,7 @@ Tversky(α=0.45, β=0.55)와 Treshold=0.4를 적용했을 때 모델 출력 내 
 
 마지막으로 BTD 이미지 사용 전후로 모델 추론 결과의 분포가 어떻게 바뀌었는지 보겠습니다. 대부분의 추론에서 dice가 0.98 이상으로 측정되었으며 각 클래스마다 dice가 저조한 데이터(이상치, 꼬리 분포)가 상당량 줄어든 것이 확인되었습니다.
 
-<img width="1298" height="868" alt="image" src="https://github.com/user-attachments/assets/e0790568-8b9d-4e36-95e1-2dfd59792bd3" />
-
+<img width="1298" height="868" alt="image" src="https://github.com/user-attachments/assets/d7b4a336-9194-44d7-b4d4-408f7c1abd47" />
 
 ## 6. 손목뼈 모델 성능 개선
 
