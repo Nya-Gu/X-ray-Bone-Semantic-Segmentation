@@ -49,7 +49,7 @@ C:.
 
 - 학습 초반에는 Radius, Ulna와 같은 비교적 큰 팔뼈를 중심으로 학습이 진행되었고 중반에는 긴 손가락뼈와 손목뼈로 확장되었습니다. 이후 학습 후반에는 손가락 끝의 작은 뼈, 구분이 어려운 손목뼈를 점진적으로 학습하는 양상을 보였습니다.
 
-<img width="2005" height="986" alt="image" src="https://github.com/user-attachments/assets/c705c58e-b8e7-4385-aedf-230371c84963" />  
+<img width="420" height="447" alt="image" src="https://github.com/user-attachments/assets/a5ecfa5d-6426-45a7-83c3-996aa44b2b8f" />
 
 ## 2. 프로젝트 수행 전략 수립
 
