@@ -154,13 +154,13 @@ C:.
 
 - 이후 FP/FN ratio box plot을 통해, 팔뼈 모델에선 FN 에러보다 FP 에러의 발생 비율이 높음을 확인했습니다. Threshold 조정을 통해 FP/FN 에러의 비율을 맞추고자 했으나 아래 표에서 볼 수 있듯이 효과를 거두진 못했습니다. 그래서 팔뼈 모델에서는 Threshold=0.5를 유지하기로 했습니다.
 
-<img width="1889" height="445" alt="image" src="https://github.com/user-attachments/assets/f2b8eb0c-8a47-4915-8640-c4cd8f1df96c" />
+<img width="1889" height="452" alt="image" src="https://github.com/user-attachments/assets/f5285bc8-64a6-4d0b-a6ea-d526826e2b97" />
 
 ### (3) 추론 결과 분포 변화 확인
 
 - 마지막으로 이미지 내 노이즈 제거 전후로 팔뼈 모델의 추론 결과가 어떻게 바뀌었는지 살폈습니다. 추론 샘플의 Dice 분포가 전보다 오른쪽으로 옮겨가고, 각 클래스별 dice가 저조한 데이터(이상치, 꼬리 분포)가 상당히 줄어든 것을 확인했습니다.
 
-<img width="1298" height="868" alt="image" src="https://github.com/user-attachments/assets/d7b4a336-9194-44d7-b4d4-408f7c1abd47" />
+<img width="1298" height="875" alt="image" src="https://github.com/user-attachments/assets/01f9de36-ea8c-46e7-b896-a0cb00d1724b" />
 
 ## 8. 손목뼈 모델 성능 개선
 
